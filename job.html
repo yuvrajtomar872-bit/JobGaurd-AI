@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobGuard AI - Fraud Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <div class="bg-white bg-opacity-20 p-3 rounded-full mr-3">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-bold">JobGuard AI</h1>
+            </div>
+            <p class="text-xl opacity-90">Protect yourself from fake job offers with AI-powered fraud detection</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Main Analysis Card -->
+        <div class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Analyze Job Offer</h2>
+            
+            <div class="space-y-6">
+                <!-- Job Details Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                    <input type="text" id="companyName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter company name">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+                    <input type="text" id="jobTitle" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter job position">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Salary Offered</label>
+                    <input type="text" id="salary" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., $5000/month">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+                    <input type="email" id="contactEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="recruiter@company.com">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Job Description</label>
+                    <textarea id="jobDescription" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Paste the job description here..."></textarea>
+                </div>
+
+                <!-- Quick Checks -->
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Quick Red Flag Checks</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="upfrontPayment" class="mr-3 h-4 w-4 text-blue-600">
+                            <span class="text-sm">Asks for upfront payment/fees</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="tooGoodSalary" class="mr-3 h-4 w-4 text-blue-600">
+                            <span class="text-sm">Salary seems too good to be true</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="urgentHiring" class="mr-3 h-4 w-4 text-blue-600">
+                            <span class="text-sm">Extremely urgent hiring</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="personalInfo" class="mr-3 h-4 w-4 text-blue-600">
+                            <span class="text-sm">Asks for personal/financial info early</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="poorGrammar" class="mr-3 h-4 w-4 text-blue-600">
+                            <span class="text-sm">Poor grammar/spelling</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="workFromHome" class="mr-3 h-4 w-4 text-blue-600">
+                            <span class="text-sm">Unsolicited work-from-home offer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Analyze Button -->
+                <button onclick="analyzeJobOffer()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition duration-300 transform hover:scale-105">
+                    🔍 Analyze Job Offer
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <div class="bg-white rounded-2xl card-shadow p-8 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Analysis Results</h2>
+                
+                <!-- Risk Score -->
+                <div class="text-center mb-8">
+                    <div id="riskMeter" class="inline-block">
+                        <div class="relative w-32 h-32 mx-auto mb-4">
+                            <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-gray-300" stroke="currentColor" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path id="riskCircle" class="text-red-500" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="riskScore" class="text-2xl font-bold">0%</span>
+                            </div>
+                        </div>
+                        <div id="riskLabel" class="text-lg font-semibold">Analyzing...</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                <div id="analysisDetails" class="space-y-6">
+                    <!-- Red Flags -->
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                        <h3 class="text-lg font-semibold text-red-800 mb-3 flex items-center">
+                            <span class="mr-2">🚨</span> Red Flags Detected
+                        </h3>
+                        <ul id="redFlags" class="space-y-2 text-red-700"></ul>
+                    </div>
+
+                    <!-- Green Flags -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
+                        <h3 class="text-lg font-semibold text-green-800 mb-3 flex items-center">
+                            <span class="mr-2">✅</span> Positive Indicators
+                        </h3>
+                        <ul id="greenFlags" class="space-y-2 text-green-700"></ul>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+                            <span class="mr-2">💡</span> Recommendations
+                        </h3>
+                        <ul id="recommendations" class="space-y-2 text-blue-700"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Section -->
+        <div class="bg-white rounded-2xl card-shadow p-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Common Job Scam Warning Signs</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <span class="text-red-500 mr-3 mt-1">⚠️</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Upfront Payments</h4>
+                            <p class="text-gray-600 text-sm">Legitimate employers never ask for money upfront for training, equipment, or background checks.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-red-500 mr-3 mt-1">⚠️</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Too Good to Be True</h4>
+                            <p class="text-gray-600 text-sm">Extremely high salaries for minimal work or no experience required.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-red-500 mr-3 mt-1">⚠️</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Poor Communication</h4>
+                            <p class="text-gray-600 text-sm">Emails with poor grammar, spelling errors, or unprofessional language.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <span class="text-red-500 mr-3 mt-1">⚠️</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Vague Job Details</h4>
+                            <p class="text-gray-600 text-sm">Job descriptions that are unclear about actual responsibilities or company details.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-red-500 mr-3 mt-1">⚠️</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Immediate Hiring</h4>
+                            <p class="text-gray-600 text-sm">Offers made without proper interviews or background verification.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-red-500 mr-3 mt-1">⚠️</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Personal Information Requests</h4>
+                            <p class="text-gray-600 text-sm">Asking for SSN, bank details, or copies of ID before job confirmation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function analyzeJobOffer() {
+            // Get form data
+            const companyName = document.getElementById('companyName').value;
+            const jobTitle = document.getElementById('jobTitle').value;
+            const salary = document.getElementById('salary').value;
+            const contactEmail = document.getElementById('contactEmail').value;
+            const jobDescription = document.getElementById('jobDescription').value;
+
+            // Get checkbox values
+            const upfrontPayment = document.getElementById('upfrontPayment').checked;
+            const tooGoodSalary = document.getElementById('tooGoodSalary').checked;
+            const urgentHiring = document.getElementById('urgentHiring').checked;
+            const personalInfo = document.getElementById('personalInfo').checked;
+            const poorGrammar = document.getElementById('poorGrammar').checked;
+            const workFromHome = document.getElementById('workFromHome').checked;
+
+            // Show results section
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+            // Calculate risk score
+            let riskScore = 0;
+            let redFlags = [];
+            let greenFlags = [];
+            let recommendations = [];
+
+            // Analyze inputs
+            if (upfrontPayment) {
+                riskScore += 30;
+                redFlags.push("Requests upfront payment - Major red flag!");
+            }
+
+            if (tooGoodSalary) {
+                riskScore += 25;
+                redFlags.push("Salary appears unrealistically high for the position");
+            }
+
+            if (urgentHiring) {
+                riskScore += 20;
+                redFlags.push("Extremely urgent hiring process - suspicious");
+            }
+
+            if (personalInfo) {
+                riskScore += 25;
+                redFlags.push("Asks for personal/financial information too early");
+            }
+
+            if (poorGrammar) {
+                riskScore += 15;
+                redFlags.push("Poor grammar and spelling in communications");
+            }
+
+            if (workFromHome) {
+                riskScore += 10;
+                redFlags.push("Unsolicited work-from-home offer");
+            }
+
+            // Email analysis
+            if (contactEmail) {
+                if (contactEmail.includes('@gmail.com') || contactEmail.includes('@yahoo.com') || contactEmail.includes('@hotmail.com')) {
+                    riskScore += 15;
+                    redFlags.push("Uses personal email instead of company domain");
+                } else if (contactEmail.includes('@')) {
+                    greenFlags.push("Uses professional email domain");
+                }
+            }
+
+            // Company name analysis
+            if (companyName) {
+                if (companyName.length > 3) {
+                    greenFlags.push("Company name provided");
+                }
+            } else {
+                riskScore += 10;
+                redFlags.push("No company name provided");
+            }
+
+            // Job description analysis
+            if (jobDescription) {
+                const desc = jobDescription.toLowerCase();
+                if (desc.includes('easy money') || desc.includes('no experience') || desc.includes('work from home')) {
+                    riskScore += 10;
+                    redFlags.push("Job description contains suspicious phrases");
+                }
+                if (desc.length > 100) {
+                    greenFlags.push("Detailed job description provided");
+                }
+            }
+
+            // Add positive indicators if risk is low
+            if (riskScore < 20) {
+                greenFlags.push("No major red flags detected");
+                greenFlags.push("Professional communication style");
+            }
+
+            // Cap risk score at 100
+            riskScore = Math.min(riskScore, 100);
+
+            // Generate recommendations
+            if (riskScore > 70) {
+                recommendations.push("🚨 HIGH RISK: Avoid this job offer completely");
+                recommendations.push("Report this potential scam to relevant authorities");
+                recommendations.push("Do not provide any personal or financial information");
+            } else if (riskScore > 40) {
+                recommendations.push("⚠️ MEDIUM RISK: Proceed with extreme caution");
+                recommendations.push("Research the company thoroughly online");
+                recommendations.push("Verify company legitimacy through official channels");
+                recommendations.push("Never pay upfront fees or provide sensitive information");
+            } else {
+                recommendations.push("✅ LOW RISK: Appears relatively safe, but stay vigilant");
+                recommendations.push("Still verify company details and job requirements");
+                recommendations.push("Trust your instincts if something feels off");
+            }
+
+            recommendations.push("Always research companies on official websites and review platforms");
+            recommendations.push("Verify job offers through official company channels");
+
+            // Update UI
+            updateRiskMeter(riskScore);
+            updateAnalysisResults(redFlags, greenFlags, recommendations);
+        }
+
+        function updateRiskMeter(score) {
+            const riskCircle = document.getElementById('riskCircle');
+            const riskScore = document.getElementById('riskScore');
+            const riskLabel = document.getElementById('riskLabel');
+
+            // Animate the circle
+            const circumference = 100;
+            const offset = circumference - (score / 100) * circumference;
+            riskCircle.style.strokeDasharray = `${circumference}, ${circumference}`;
+            riskCircle.style.strokeDashoffset = offset;
+
+            // Update colors and labels based on risk level
+            if (score >= 70) {
+                riskCircle.classList.remove('text-yellow-500', 'text-green-500');
+                riskCircle.classList.add('text-red-500');
+                riskLabel.textContent = 'HIGH RISK';
+                riskLabel.className = 'text-lg font-semibold text-red-600';
+            } else if (score >= 40) {
+                riskCircle.classList.remove('text-red-500', 'text-green-500');
+                riskCircle.classList.add('text-yellow-500');
+                riskLabel.textContent = 'MEDIUM RISK';
+                riskLabel.className = 'text-lg font-semibold text-yellow-600';
+            } else {
+                riskCircle.classList.remove('text-red-500', 'text-yellow-500');
+                riskCircle.classList.add('text-green-500');
+                riskLabel.textContent = 'LOW RISK';
+                riskLabel.className = 'text-lg font-semibold text-green-600';
+            }
+
+            // Animate score counter
+            let currentScore = 0;
+            const increment = score / 50;
+            const timer = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= score) {
+                    currentScore = score;
+                    clearInterval(timer);
+                }
+                riskScore.textContent = Math.round(currentScore) + '%';
+            }, 20);
+        }
+
+        function updateAnalysisResults(redFlags, greenFlags, recommendations) {
+            const redFlagsList = document.getElementById('redFlags');
+            const greenFlagsList = document.getElementById('greenFlags');
+            const recommendationsList = document.getElementById('recommendations');
+
+            // Clear existing content
+            redFlagsList.innerHTML = '';
+            greenFlagsList.innerHTML = '';
+            recommendationsList.innerHTML = '';
+
+            // Add red flags
+            if (redFlags.length === 0) {
+                redFlagsList.innerHTML = '<li>No major red flags detected</li>';
+            } else {
+                redFlags.forEach(flag => {
+                    const li = document.createElement('li');
+                    li.textContent = flag;
+                    li.className = 'flex items-start';
+                    redFlagsList.appendChild(li);
+                });
+            }
+
+            // Add green flags
+            if (greenFlags.length === 0) {
+                greenFlagsList.innerHTML = '<li>Limited positive indicators found</li>';
+            } else {
+                greenFlags.forEach(flag => {
+                    const li = document.createElement('li');
+                    li.textContent = flag;
+                    li.className = 'flex items-start';
+                    greenFlagsList.appendChild(li);
+                });
+            }
+
+            // Add recommendations
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                li.className = 'flex items-start';
+                recommendationsList.appendChild(li);
+            });
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9618e6e136db6eb9',t:'MTc1MjkxNDI5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
